@@ -30,11 +30,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.TodoApplication
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.setupRefreshLayout
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
 
@@ -43,7 +43,9 @@ import timber.log.Timber
  */
 class TasksFragment : Fragment() {
 
-    private val viewModel by viewModels<TasksViewModel>()
+    private val viewModel by viewModels<TasksViewModel> {
+        TasksViewModelFactory((requireActivity().application as TodoApplication).taskRepository)
+    }
 
     private val args: TasksFragmentArgs by navArgs()
 
@@ -68,14 +70,17 @@ class TasksFragment : Fragment() {
                 viewModel.clearCompletedTasks()
                 true
             }
+
             R.id.menu_filter -> {
                 showFilteringPopUpMenu()
                 true
             }
+
             R.id.menu_refresh -> {
                 viewModel.loadTasks(true)
                 true
             }
+
             else -> false
         }
 
